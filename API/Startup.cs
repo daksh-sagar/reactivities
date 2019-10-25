@@ -13,32 +13,48 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Persistence;
 
-namespace API {
-    public class Startup {
-        public Startup(IConfiguration configuration) {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-        
-        public void ConfigureServices(IServiceCollection services) {
-            services.AddDbContext<DataContext>(opt => {
-                opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
-            });
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            
-        }
-        
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
-            if (env.IsDevelopment()) {
-                app.UseDeveloperExceptionPage();
-            }
-            else {
-//                app.UseHsts();
-            }
-
-//            app.UseHttpsRedirection();
-            app.UseMvc();
-        }
+namespace API
+{
+  public class Startup
+  {
+    public Startup(IConfiguration configuration)
+    {
+      Configuration = configuration;
     }
+
+    public IConfiguration Configuration { get; }
+
+    public void ConfigureServices(IServiceCollection services)
+    {
+      services.AddDbContext<DataContext>(opt =>
+      {
+        opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+      });
+      services.AddCors(options =>
+      {
+        options.AddPolicy("CorsPolicy", policy =>
+        {
+          policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+        });
+      });
+      services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+    }
+
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    {
+      if (env.IsDevelopment())
+      {
+        app.UseDeveloperExceptionPage();
+      }
+      else
+      {
+        //                app.UseHsts();
+      }
+
+      //            app.UseHttpsRedirection();
+      app.UseCors("CorsPolicy");
+      app.UseMvc();
+    }
+  }
 }
