@@ -4,6 +4,7 @@ import { IActivity } from '../models/activity'
 import Navbar from '../../features/navbar/Navbar'
 import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard'
 import agent from '../api/agent'
+import LoadingComponent from './LoadingComponent'
 
 const App: React.FC = () => {
   const [activities, setActivities] = useState<IActivity[]>([])
@@ -11,6 +12,7 @@ const App: React.FC = () => {
     null
   )
   const [editMode, setEditMode] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   const handleSelectActivity = (id: string) => {
     setSelectedActivity(activities.filter(activity => activity.id === id)[0])
@@ -30,6 +32,7 @@ const App: React.FC = () => {
         activities.push(activity)
       })
       setActivities(activities)
+      setLoading(false)
     })
   }
 
@@ -53,7 +56,9 @@ const App: React.FC = () => {
     fetchActivities()
   }, [])
 
-  return (
+  return loading ? (
+    <LoadingComponent content='Loading Activities...' />
+  ) : (
     <>
       <Navbar openCreateForm={handleOpenCreateForm} />
       <Container style={{ marginTop: '7em' }}>
