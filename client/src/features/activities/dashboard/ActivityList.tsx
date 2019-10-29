@@ -5,6 +5,7 @@ import { IActivity } from '../../../app/models/activity'
 interface IProps {
   activities: IActivity[]
   selectActivity: (id: string) => void
+  submitting: boolean
 }
 
 const ActivityList: React.FC<IProps> = ({ activities, selectActivity }) => {

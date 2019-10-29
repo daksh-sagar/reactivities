@@ -13,6 +13,7 @@ const App: React.FC = () => {
   )
   const [editMode, setEditMode] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
 
   const handleSelectActivity = (id: string) => {
     setSelectedActivity(activities.filter(activity => activity.id === id)[0])
@@ -37,18 +38,22 @@ const App: React.FC = () => {
   }
 
   const handleCreateActivity = (activity: IActivity) => {
+    setSubmitting(true)
     agent.Activities.create(activity).then(() => {
       setActivities([...activities, activity])
       setEditMode(false)
       setSelectedActivity(activity)
+      setSubmitting(false)
     })
   }
 
   const handleEditActivity = (activity: IActivity) => {
+    setSubmitting(true)
     agent.Activities.update(activity).then(() => {
       setActivities([...activities.filter(a => a.id !== activity.id), activity])
       setEditMode(false)
       setSelectedActivity(activity)
+      setSubmitting(false)
     })
   }
 
@@ -71,6 +76,7 @@ const App: React.FC = () => {
           setSelectedActivity={setSelectedActivity}
           createActivity={handleCreateActivity}
           editActivity={handleEditActivity}
+          submitting={submitting}
         />
       </Container>
     </>
