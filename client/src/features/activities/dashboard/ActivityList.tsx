@@ -1,4 +1,5 @@
 import React from 'react'
+import { observer } from 'mobx-react-lite'
 import { Item, Segment, Button, Label } from 'semantic-ui-react'
 import { IActivity } from '../../../app/models/activity'
 
@@ -41,4 +42,4 @@ const ActivityList: React.FC<IProps> = ({ activities, selectActivity }) => {
   )
 }
 
-export default ActivityList
+export default observer(ActivityList)

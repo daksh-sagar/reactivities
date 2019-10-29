@@ -1,40 +1,33 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { Container } from 'semantic-ui-react'
+import { observer } from 'mobx-react-lite'
 import { IActivity } from '../models/activity'
 import Navbar from '../../features/navbar/Navbar'
 import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard'
 import agent from '../api/agent'
 import LoadingComponent from './LoadingComponent'
+import ActivityStore from '../stores/activityStore'
 
 const App: React.FC = () => {
+  const activityStore = useContext(ActivityStore)
+
   const [activities, setActivities] = useState<IActivity[]>([])
   const [selectedActivity, setSelectedActivity] = useState<IActivity | null>(
     null
   )
   const [editMode, setEditMode] = useState(false)
-  const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
 
   const handleSelectActivity = (id: string) => {
-    setSelectedActivity(activities.filter(activity => activity.id === id)[0])
+    setSelectedActivity(
+      activityStore.activities.filter(activity => activity.id === id)[0]
+    )
     setEditMode(false)
   }
 
   const handleOpenCreateForm = () => {
     setSelectedActivity(null)
     setEditMode(true)
-  }
-
-  const fetchActivities = () => {
-    agent.Activities.list().then(response => {
-      const activities: IActivity[] = []
-      response.forEach(activity => {
-        activity.date = activity.date.split('.')[0]
-        activities.push(activity)
-      })
-      setActivities(activities)
-      setLoading(false)
-    })
   }
 
   const handleCreateActivity = (activity: IActivity) => {
@@ -58,17 +51,17 @@ const App: React.FC = () => {
   }
 
   useEffect(() => {
-    fetchActivities()
-  }, [])
+    activityStore.loadActivities()
+  }, [activityStore])
 
-  return loading ? (
+  return activityStore.loadingInitial ? (
     <LoadingComponent content='Loading Activities...' />
   ) : (
     <>
       <Navbar openCreateForm={handleOpenCreateForm} />
       <Container style={{ marginTop: '7em' }}>
         <ActivityDashboard
-          activities={activities}
+          activities={activityStore.activities}
           selectActivity={handleSelectActivity}
           selectedActivity={selectedActivity}
           editMode={editMode}
@@ -83,4 +76,4 @@ const App: React.FC = () => {
   )
 }
 
-export default App
+export default observer(App)
