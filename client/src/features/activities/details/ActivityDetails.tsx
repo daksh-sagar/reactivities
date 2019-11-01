@@ -1,16 +1,36 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Card, Button, Image } from 'semantic-ui-react'
 import ActivityStore from '../../../app/stores/activityStore'
 import { observer } from 'mobx-react-lite'
+import { RouteComponentProps } from 'react-router'
+import LoadingComponent from '../../../app/layout/LoadingComponent'
+import { Link } from 'react-router-dom'
 
-const ActivityDetails: React.FC = () => {
+interface DetailsParams {
+  id: string
+}
+
+const ActivityDetails: React.FC<RouteComponentProps<DetailsParams>> = ({
+  match,
+  history
+}) => {
   const activityStore = useContext(ActivityStore)
   const {
-    selectedActivity: activity,
-    openEditForm,
-    cancelSelectedActivity
+    activity,
+    loadActivity,
+    loadingInitial,
+    clearActivity
   } = activityStore
-  return (
+
+  useEffect(() => {
+    clearActivity()
+    loadActivity(match.params.id)
+  }, [match.params.id, loadActivity, clearActivity])
+
+  // TODO: What to display when there is an error fetching the activity ?
+  return loadingInitial || !activity ? (
+    <LoadingComponent content='Loading Activity...' />
+  ) : (
     <Card fluid>
       <Image
         src={`/assets/categoryImages/${activity!.category}.jpg`}
@@ -27,13 +47,14 @@ const ActivityDetails: React.FC = () => {
       <Card.Content extra>
         <Button.Group widths={2}>
           <Button
-            onClick={() => openEditForm(activity!.id)}
+            as={Link}
+            to={`/editActivity/${activity.id}`}
             basic
             color='blue'
             content='Edit'
           />
           <Button
-            onClick={cancelSelectedActivity}
+            onClick={() => history.push('/activities')}
             basic
             color='grey'
             content='Cancel'

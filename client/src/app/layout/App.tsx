@@ -1,28 +1,48 @@
-import React, { useEffect, useContext } from 'react'
+import React from 'react'
 import { Container } from 'semantic-ui-react'
+import {
+  Route,
+  Switch,
+  withRouter,
+  RouteComponentProps
+} from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import Navbar from '../../features/navbar/Navbar'
 import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard'
-import LoadingComponent from './LoadingComponent'
-import ActivityStore from '../stores/activityStore'
+import HomePage from '../../features/home/HomePage'
+import ActivityForm from '../../features/activities/form/ActivityForm'
+import ActivityDetails from '../../features/activities/details/ActivityDetails'
 
-const App: React.FC = () => {
-  const activityStore = useContext(ActivityStore)
-
-  useEffect(() => {
-    activityStore.loadActivities()
-  }, [activityStore])
-
-  return activityStore.loadingInitial ? (
-    <LoadingComponent content='Loading Activities...' />
-  ) : (
+const App: React.FC<RouteComponentProps> = ({ location }) => {
+  return (
     <>
-      <Navbar />
-      <Container style={{ marginTop: '7em' }}>
-        <ActivityDashboard />
-      </Container>
+      <Route path='/' component={HomePage} />
+      <Route
+        path={'/(.+)'}
+        render={() => (
+          <>
+            <Navbar />
+            <Container style={{ marginTop: '7em' }}>
+              <Switch>
+                <Route path='/activities/:id' component={ActivityDetails} />
+                <Route path='/activities' component={ActivityDashboard} />
+                <Route
+                  key={location.key}
+                  path='/editActivity/:id'
+                  component={ActivityForm}
+                />
+                <Route
+                  key={location.key}
+                  path='/createActivity'
+                  component={ActivityForm}
+                />
+              </Switch>
+            </Container>
+          </>
+        )}
+      />
     </>
   )
 }
 
-export default observer(App)
+export default withRouter(observer(App))
