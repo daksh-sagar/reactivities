@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using API.Middleware;
 using Application.Activities;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Persistence;
 
 namespace API {
@@ -24,24 +19,27 @@ namespace API {
     public IConfiguration Configuration { get; }
 
     public void ConfigureServices(IServiceCollection services) {
-      
       services.AddDbContext<DataContext>(opt => {
         opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
       });
-      
+
       services.AddCors(options => {
         options.AddPolicy("CorsPolicy",
           policy => { policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000"); });
       });
 
       services.AddMediatR(typeof(List.Handler).Assembly);
-      
-      services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+      services
+        .AddMvc()
+        .AddFluentValidation(c => c.RegisterValidatorsFromAssemblyContaining<Create>())
+        .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
     }
 
     public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
+      app.UseMiddleware<ErrorHandlingMiddleware>();
       if (env.IsDevelopment()) {
-        app.UseDeveloperExceptionPage();
+//        app.UseDeveloperExceptionPage();
       }
       else {
         //                app.UseHsts();
