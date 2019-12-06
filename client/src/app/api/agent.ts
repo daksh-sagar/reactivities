@@ -25,7 +25,7 @@ axios.interceptors.response.use(undefined, error => {
     toast.error('Internal Server Error - Something very bad happened !')
   }
 
-  throw error
+  throw error.response
 })
 axios.defaults.baseURL = 'http://localhost:5000/api'
 
