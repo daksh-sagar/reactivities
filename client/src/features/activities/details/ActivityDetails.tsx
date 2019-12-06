@@ -8,6 +8,7 @@ import ActivityDetailedHeader from './ActivityDetailedHeader'
 import ActivityDetailedInfo from './ActivityDetailedInfo'
 import ActivityDetailedChat from './ActivityDetailedChat'
 import ActivityDetailedSidebar from './ActivityDetailedSidebar'
+import { RootStoreContext } from '../../../app/stores/rootStore'
 
 interface DetailParams {
   id: string
@@ -16,7 +17,7 @@ interface DetailParams {
 const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({
   match
 }) => {
-  const activityStore = useContext(ActivityStore)
+  const activityStore = useContext(RootStoreContext).activityStore
   const { activity, loadActivity, loadingInitial } = activityStore
 
   useEffect(() => {
