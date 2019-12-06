@@ -170,7 +170,6 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
               </Form>
             )}
           />
-          >
         </Segment>
       </Grid.Column>
     </Grid>
