@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Container } from 'semantic-ui-react'
 import {
   Route,
@@ -15,9 +15,23 @@ import ActivityForm from '../../features/activities/form/ActivityForm'
 import ActivityDetails from '../../features/activities/details/ActivityDetails'
 import NotFound from './NotFound'
 import LoginForm from '../../features/user/LoginForm'
+import { RootStoreContext } from '../stores/rootStore'
+import LoadingComponent from './LoadingComponent'
 
 const App: React.FC<RouteComponentProps> = ({ location }) => {
-  return (
+  const { commonStore, userStore } = useContext(RootStoreContext)
+  const { appLoaded, setAppLoaded, token } = commonStore
+  const { getLoggedInUser } = userStore
+
+  useEffect(() => {
+    if (token) {
+      getLoggedInUser().finally(() => setAppLoaded())
+    } else {
+      setAppLoaded()
+    }
+  }, [token, setAppLoaded, getLoggedInUser])
+
+  return appLoaded ? (
     <>
       <ToastContainer position='bottom-right' pauseOnHover={false} />
       <Route exact path='/' component={HomePage} />
@@ -48,6 +62,8 @@ const App: React.FC<RouteComponentProps> = ({ location }) => {
         )}
       />
     </>
+  ) : (
+    <LoadingComponent content='Loading App...' />
   )
 }
 
