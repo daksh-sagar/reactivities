@@ -32,7 +32,7 @@ const App: React.FC<RouteComponentProps> = ({ location }) => {
                 <Route path='/activities' component={ActivityDashboard} />
                 <Route
                   key={location.key}
-                  path='/editActivity/:id'
+                  path='/manage/:id'
                   component={ActivityForm}
                 />
                 <Route
