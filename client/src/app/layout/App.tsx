@@ -17,6 +17,7 @@ import NotFound from './NotFound'
 import LoginForm from '../../features/user/LoginForm'
 import { RootStoreContext } from '../stores/rootStore'
 import LoadingComponent from './LoadingComponent'
+import RegisterForm from '../../features/user/RegisterForm'
 
 const App: React.FC<RouteComponentProps> = ({ location }) => {
   const { commonStore, userStore } = useContext(RootStoreContext)
@@ -55,6 +56,7 @@ const App: React.FC<RouteComponentProps> = ({ location }) => {
                   component={ActivityForm}
                 />
                 <Route path='/login' component={LoginForm} />
+                <Route path='/register' component={RegisterForm} />
                 <Route component={NotFound} />
               </Switch>
             </Container>

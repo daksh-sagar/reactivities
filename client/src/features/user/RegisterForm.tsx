@@ -9,15 +9,17 @@ import { combineValidators, isRequired } from 'revalidate'
 
 const validate = combineValidators({
   email: isRequired('Email'),
-  password: isRequired('Password')
+  password: isRequired('Password'),
+  displayName: isRequired('Display Name'),
+  username: isRequired('Username')
 })
 
-const LoginForm = () => {
+const RegisterForm = () => {
   const rootStore = useContext(RootStoreContext)
-  const { login } = rootStore.userStore
+  const { register } = rootStore.userStore
 
   const finalFormSubmit = (values: IUserFormValues) => {
-    return login(values).catch(error => ({
+    return register(values).catch(error => ({
       [FORM_ERROR]: error
     }))
   }
@@ -25,7 +27,7 @@ const LoginForm = () => {
   return (
     <FinalForm
       onSubmit={finalFormSubmit}
-      validate={validate}
+      // validate={validate}
       render={({
         handleSubmit,
         submitting,
@@ -36,23 +38,33 @@ const LoginForm = () => {
         dirtySinceLastSubmit
       }) => (
         <Form onSubmit={handleSubmit}>
+          <Field name='username' placeholder='Username' component={TextInput} />
           <Field name='email' placeholder='Email' component={TextInput} />
+          <Field
+            name='displayName'
+            placeholder='Display Name'
+            component={TextInput}
+          />
           <Field
             name='password'
             placeholder='Password'
             type='password'
             component={TextInput}
           />
-          {hasSubmitErrors && !dirtySinceLastSubmit && (
-            <Label color='red' basic content={submitError.data.errors} />
-          )}
+          {hasSubmitErrors &&
+            !dirtySinceLastSubmit &&
+            Object.values(submitError.data.errors)
+              .flat()
+              .map((err, i) => (
+                <Label color='red' basic key={i} content={err} />
+              ))}
           <Divider hidden />
           <Button
             disabled={(invalid && !dirtySinceLastSubmit) || pristine}
             loading={submitting}
             color='teal'
             size='medium'
-            content='Login'
+            content='Register'
           />
         </Form>
       )}
@@ -60,4 +72,4 @@ const LoginForm = () => {
   )
 }
 
-export default LoginForm
+export default RegisterForm
