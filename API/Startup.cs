@@ -2,6 +2,7 @@
 using API.Middleware;
 using Application.Activities;
 using Application.Interfaces;
+using AutoMapper;
 using Domain;
 using FluentValidation.AspNetCore;
 using Infrastructure.Security;
@@ -29,6 +30,7 @@ namespace API {
 
     public void ConfigureServices(IServiceCollection services) {
       services.AddDbContext<DataContext>(opt => {
+        opt.UseLazyLoadingProxies();
         opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
       });
 
@@ -38,7 +40,7 @@ namespace API {
       });
 
       services.AddMediatR(typeof(List.Handler).Assembly);
-
+      services.AddAutoMapper(typeof(List.Handler));
       services
         .AddMvc(opt => {
           var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
