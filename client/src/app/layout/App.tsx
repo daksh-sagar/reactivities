@@ -18,6 +18,7 @@ import LoginForm from '../../features/user/LoginForm'
 import { RootStoreContext } from '../stores/rootStore'
 import LoadingComponent from './LoadingComponent'
 import RegisterForm from '../../features/user/RegisterForm'
+import ProfilePage from '../../features/profiles/ProfilePage'
 
 const App: React.FC<RouteComponentProps> = ({ location }) => {
   const { commonStore, userStore } = useContext(RootStoreContext)
@@ -45,6 +46,7 @@ const App: React.FC<RouteComponentProps> = ({ location }) => {
               <Switch>
                 <Route path='/activities/:id' component={ActivityDetails} />
                 <Route path='/activities' component={ActivityDashboard} />
+                <Route path='/profile/:username' component={ProfilePage} />
                 <Route
                   key={location.key}
                   path='/manage/:id'
