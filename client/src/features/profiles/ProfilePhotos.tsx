@@ -1,21 +1,49 @@
-import React, { useContext } from 'react'
-import { Tab, Header, Card, Image } from 'semantic-ui-react'
+import React, { useContext, useState } from 'react'
+import { Tab, Header, Card, Image, Button, Grid } from 'semantic-ui-react'
 import { RootStoreContext } from '../../app/stores/rootStore'
+import PhotoUploadWidget from '../../app/common/photoUpload/PhotoUploadWidget'
 
 const ProfilePhotos = () => {
   const { profileStore } = useContext(RootStoreContext)
-  const { profile } = profileStore
+  const { profile, isCurrentUser } = profileStore
+
+  const [addPhotoMode, setAddPhotoMode] = useState(true)
+
   return (
     <Tab.Pane>
-      <Header icon='image' content='Photos' />
-      <Card.Group itemsPerRow={5}>
-        {profile &&
-          profile.photos.map(photo => (
-            <Card key={photo.id}>
-              <Image src={photo.url} />
-            </Card>
-          ))}
-      </Card.Group>
+      <Grid>
+        <Grid.Column width={16} style={{ paddingBottom: 0 }}>
+          <Header floated='left' icon='image' content='Photos' />
+          {isCurrentUser && (
+            <Button
+              basic
+              floated='right'
+              onClick={() => setAddPhotoMode(!addPhotoMode)}
+              content={addPhotoMode ? 'Cancel' : 'Add Photo'}
+            />
+          )}
+        </Grid.Column>
+        <Grid.Column width={16}>
+          {addPhotoMode ? (
+            <PhotoUploadWidget />
+          ) : (
+            <Card.Group itemsPerRow={5}>
+              {profile &&
+                profile.photos.map(photo => (
+                  <Card key={photo.id}>
+                    <Image src={photo.url} />
+                    {isCurrentUser && (
+                      <Button.Group fluid widths={2}>
+                        <Button basic color='green' compact content='Main' />
+                        <Button basic color='red' compact icon='trash' />
+                      </Button.Group>
+                    )}
+                  </Card>
+                ))}
+            </Card.Group>
+          )}
+        </Grid.Column>
+      </Grid>
     </Tab.Pane>
   )
 }
