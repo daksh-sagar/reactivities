@@ -1,7 +1,38 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
+import { Grid } from 'semantic-ui-react'
+import ProfileHeader from './ProfileHeader'
+import ProfileContent from './ProfileContent'
+import { RootStoreContext } from '../../app/stores/rootStore'
+import { RouteComponentProps } from 'react-router'
+import LoadingComponent from '../../app/layout/LoadingComponent'
+import { observer } from 'mobx-react-lite'
 
-const ProfilePage = () => {
-  return <div></div>
+interface RouteParams {
+  username: string
 }
 
-export default ProfilePage
+interface IProps extends RouteComponentProps<RouteParams> {}
+
+const ProfilePage: React.FC<IProps> = ({ match }) => {
+  const { profileStore } = useContext(RootStoreContext)
+  const { profile, loadProfile, loadingProfile } = profileStore
+
+  useEffect(() => {
+    loadProfile(match.params.username)
+  }, [loadProfile, match])
+
+  return loadingProfile ? (
+    <>
+      <LoadingComponent content='Loading Profile...' />
+    </>
+  ) : (
+    <Grid>
+      <Grid.Column width={16}>
+        <ProfileHeader profile={profile!} />
+        <ProfileContent />
+      </Grid.Column>
+    </Grid>
+  )
+}
+
+export default observer(ProfilePage)
