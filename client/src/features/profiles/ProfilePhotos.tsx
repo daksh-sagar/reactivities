@@ -6,9 +6,17 @@ import { observer } from 'mobx-react-lite'
 
 const ProfilePhotos = () => {
   const { profileStore } = useContext(RootStoreContext)
-  const { profile, isCurrentUser, uploadPhoto, uploadingPhoto } = profileStore
+  const {
+    profile,
+    isCurrentUser,
+    uploadPhoto,
+    uploadingPhoto,
+    setMainPhoto,
+    loading
+  } = profileStore
 
-  const [addPhotoMode, setAddPhotoMode] = useState(true)
+  const [addPhotoMode, setAddPhotoMode] = useState(false)
+  const [target, setTarget] = useState<string | undefined>(undefined)
 
   const handleUploadImage = (photo: Blob) => {
     uploadPhoto(photo).then(() => setAddPhotoMode(false))
@@ -42,7 +50,19 @@ const ProfilePhotos = () => {
                     <Image src={photo.url} />
                     {isCurrentUser && (
                       <Button.Group fluid widths={2}>
-                        <Button basic color='green' compact content='Main' />
+                        <Button
+                          name={photo.id}
+                          basic
+                          disabled={photo.isMain}
+                          color='green'
+                          onClick={e => {
+                            setTarget(e.currentTarget.name)
+                            setMainPhoto(photo)
+                          }}
+                          loading={loading && target === photo.id}
+                          compact
+                          content='Main'
+                        />
                         <Button basic color='red' compact icon='trash' />
                       </Button.Group>
                     )}
