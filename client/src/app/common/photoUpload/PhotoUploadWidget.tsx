@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Header, Grid, Image, Button } from 'semantic-ui-react'
+import { Header, Grid, Button } from 'semantic-ui-react'
 import { observer } from 'mobx-react-lite'
 import PhotoWidgetDropzone from './PhotoWidgetDropzone'
 import PhotoCropperWidget from './PhotoCropperWidget'

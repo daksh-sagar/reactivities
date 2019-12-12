@@ -27,7 +27,7 @@ const RegisterForm = () => {
   return (
     <FinalForm
       onSubmit={finalFormSubmit}
-      // validate={validate}
+      validate={validate}
       render={({
         handleSubmit,
         submitting,
