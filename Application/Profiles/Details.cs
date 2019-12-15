@@ -2,33 +2,25 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Profiles {
   public class Details {
-    public class Query : IRequest<ProfileDto> {
+    public class Query : IRequest<Profile> {
       public string Username { get; set; }
     }
 
-    public class Handler : IRequestHandler<Query, ProfileDto> {
-      private readonly DataContext _context;
+    public class Handler : IRequestHandler<Query, Profile> {
+      private readonly IProfileReader _profileReader;
 
-      public Handler(DataContext context) {
-        _context = context;
+      public Handler(IProfileReader profileReader) {
+        _profileReader = profileReader;
       }
 
-      public async Task<ProfileDto> Handle(Query request, CancellationToken cancellationToken) {
-        var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName ==
-                                                                 request.Username);
-        
-        return new ProfileDto {
-          DisplayName = user.DisplayName,
-          Username = user.UserName,
-          Image = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,
-          Bio = user.Bio,
-          Photos = user.Photos
-        };
+      public async Task<Profile> Handle(Query request, CancellationToken cancellationToken) {
+        return await _profileReader.ReadProfile(request.Username);
       }
     }
   }
