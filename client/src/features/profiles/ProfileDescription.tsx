@@ -32,7 +32,7 @@ const ProfileDescription = () => {
         ) : (
           <>
             <Divider hidden />
-            {profile!.bio}
+            <div>{profile!.bio}</div>
           </>
         )}
       </Grid.Column>

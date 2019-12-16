@@ -9,6 +9,7 @@ export interface IActivity {
   // specific to the logged in user
   isGoing: boolean
   isHost: boolean
+
   attendees: IAttendee[]
   comments: IComment[]
 }
@@ -50,4 +51,5 @@ export interface IAttendee {
   displayName: string
   image: string
   isHost: boolean
+  following?: boolean
 }
