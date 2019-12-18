@@ -22,7 +22,8 @@ const ProfilePage: React.FC<IProps> = ({ match }) => {
     follow,
     unfollow,
     isCurrentUser,
-    loading
+    loading,
+    setActiveTab
   } = profileStore
 
   useEffect(() => {
@@ -43,7 +44,7 @@ const ProfilePage: React.FC<IProps> = ({ match }) => {
           isCurrentUser={isCurrentUser}
           loading={loading}
         />
-        <ProfileContent />
+        <ProfileContent setActiveTab={setActiveTab} />
       </Grid.Column>
     </Grid>
   )

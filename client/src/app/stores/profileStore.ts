@@ -1,20 +1,33 @@
 import { RootStore } from './rootStore'
-import { observable, action, runInAction, computed } from 'mobx'
+import { observable, action, runInAction, computed, reaction } from 'mobx'
 import { IProfile, IPhoto } from '../models/profile'
 import agent from '../api/agent'
 import { toast } from 'react-toastify'
-import { assignmentExpression } from '@babel/types'
 
 export default class ProfileStore {
   rootStore: RootStore
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore
+
+    reaction(
+      () => this.activeTab,
+      activeTab => {
+        if (activeTab === 3 || activeTab === 4) {
+          const predicate = activeTab === 3 ? 'followers' : 'following'
+          this.loadFollowings(predicate)
+        } else {
+          this.followings = []
+        }
+      }
+    )
   }
 
   @observable profile: IProfile | null = null
   @observable loadingProfile = true
   @observable uploadingPhoto = false
   @observable loading = false
+  @observable followings: IProfile[] = []
+  @observable activeTab: number = 0
 
   @computed get isCurrentUser() {
     if (this.rootStore.userStore.user && this.profile) {
@@ -22,6 +35,10 @@ export default class ProfileStore {
     }
 
     return false
+  }
+
+  @action setActiveTab = (activeIndex: number) => {
+    this.activeTab = activeIndex
   }
 
   @action loadProfile = async (username: string) => {
@@ -142,7 +159,25 @@ export default class ProfileStore {
         this.profile!.followersCount -= 1
       })
     } catch (error) {
-      toast.error('Problem following user')
+      toast.error('Problem unfollowing user')
+    } finally {
+      runInAction(() => {
+        this.loading = false
+      })
+    }
+  }
+
+  @action loadFollowings = async (predicate: string) => {
+    this.loading = true
+    try {
+      const profiles = await agent.Profiles.list(
+        this.profile!.username,
+        predicate
+      )
+      runInAction(() => {
+        this.followings = profiles
+      })
+    } catch (error) {
     } finally {
       runInAction(() => {
         this.loading = false
