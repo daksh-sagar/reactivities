@@ -14,3 +14,10 @@ export interface IPhoto {
   url: string
   isMain: boolean
 }
+
+export interface IUserActivity {
+  id: string
+  category: string
+  title: string
+  date: Date
+}

@@ -8,8 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers {
   public class ActivitiesController : BaseController {
     [HttpGet]
-    public async Task<ActionResult<List.ActivitiesEnvelope>> List(int limit = 5, int offset = 0) {
-      return await Mediator.Send(new List.Query(limit, offset));
+    public async Task<ActionResult<List.ActivitiesEnvelope>> List(bool isGoing, bool isHost, DateTime? startDate,
+      int limit = 5, int offset = 0) {
+      return await Mediator.Send(new List.Query(limit, offset, isHost, isGoing, startDate));
     }
 
     [HttpGet("{id}")]
