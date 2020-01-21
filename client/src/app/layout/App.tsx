@@ -19,6 +19,7 @@ import { RootStoreContext } from '../stores/rootStore'
 import LoadingComponent from './LoadingComponent'
 import RegisterForm from '../../features/user/RegisterForm'
 import ProfilePage from '../../features/profiles/ProfilePage'
+import PrivateRoute from './PrivateRoute'
 
 const App: React.FC<RouteComponentProps> = ({ location }) => {
   const { commonStore, userStore } = useContext(RootStoreContext)
@@ -44,15 +45,24 @@ const App: React.FC<RouteComponentProps> = ({ location }) => {
             <Navbar />
             <Container style={{ marginTop: '7em' }}>
               <Switch>
-                <Route path='/activities/:id' component={ActivityDetails} />
-                <Route path='/activities' component={ActivityDashboard} />
-                <Route path='/profile/:username' component={ProfilePage} />
-                <Route
+                <PrivateRoute
+                  path='/activities/:id'
+                  component={ActivityDetails}
+                />
+                <PrivateRoute
+                  path='/activities'
+                  component={ActivityDashboard}
+                />
+                <PrivateRoute
+                  path='/profile/:username'
+                  component={ProfilePage}
+                />
+                <PrivateRoute
                   key={location.key}
                   path='/manage/:id'
                   component={ActivityForm}
                 />
-                <Route
+                <PrivateRoute
                   key={location.key}
                   path='/createActivity'
                   component={ActivityForm}

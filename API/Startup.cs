@@ -42,7 +42,10 @@ namespace API {
 
       services.AddCors(options => {
         options.AddPolicy("CorsPolicy",
-          policy => { policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000").AllowCredentials(); });
+          policy => {
+            policy.AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("WWW-Authenticate")
+              .WithOrigins("http://localhost:3000").AllowCredentials();
+          });
       });
 
       services.AddMediatR(typeof(List.Handler).Assembly);
@@ -74,9 +77,10 @@ namespace API {
           ValidateIssuerSigningKey = true,
           IssuerSigningKey = key,
           ValidateAudience = false,
-          ValidateIssuer = false
+          ValidateIssuer = false,
+          ValidateLifetime = true
         };
-        
+
         opt.Events = new JwtBearerEvents {
           OnMessageReceived = context => {
             var accessToken = context.Request.Query["access_token"];
@@ -109,7 +113,7 @@ namespace API {
       //            app.UseHttpsRedirection();
       app.UseAuthentication();
       app.UseCors("CorsPolicy");
-      app.UseSignalR(routes => {routes.MapHub<ChatHub>("/chat");});
+      app.UseSignalR(routes => { routes.MapHub<ChatHub>("/chat"); });
       app.UseMvc();
     }
   }

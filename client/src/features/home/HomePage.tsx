@@ -6,6 +6,7 @@ import { RootStoreContext } from '../../app/stores/rootStore'
 const HomePage = () => {
   const userStore = useContext(RootStoreContext).userStore
   const { isLoggedIn, user } = userStore
+  const token = window.localStorage.getItem('jwt')
 
   return (
     <Segment inverted textAlign='center' vertical className='masthead'>
@@ -19,7 +20,7 @@ const HomePage = () => {
           />
           Reactivities
         </Header>
-        {isLoggedIn && user ? (
+        {token && isLoggedIn && user ? (
           <>
             <Header
               as='h2'
